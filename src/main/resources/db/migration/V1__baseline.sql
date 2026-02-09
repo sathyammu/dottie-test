@@ -17,12 +17,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: test; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-ALTER SCHEMA test OWNER TO postgres;
-
---
 -- Name: ltree; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -230,22 +224,6 @@ $_$;
 ALTER FUNCTION public.try_cast(_in text, INOUT _out anyelement) OWNER TO postgres;
 
 --
--- Name: fair_share_tasks(); Type: PROCEDURE; Schema: test; Owner: postgres
---
-
-CREATE PROCEDURE test.fair_share_tasks()
-    LANGUAGE plpgsql
-    AS $$
-begin
-	insert into task (topic, identifier, input) select (array_sample(ARRAY['SPLIT_PDF', 'EXTRACT_DOC_TYPE'], 2))[1], '4', '{"tenantId": 5 }' from generate_series(1,10)  ;
-	assert (select count(*) from task where (convert_to_jsonb(input) #>> '{tenantId}')::int =5) =2, 'asda';
-	rollback;
-end;
-$$;
-
-
-ALTER PROCEDURE test.fair_share_tasks() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -6595,4 +6573,3 @@ CREATE TABLE IF NOT EXISTS loan_notes (
         FOREIGN KEY (tenant_id)
         REFERENCES "Tenant"(id)
 );
-
