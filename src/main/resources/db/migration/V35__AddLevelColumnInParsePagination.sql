@@ -1,0 +1,1 @@
+alter table parse_pagination_results add column IF NOT EXISTS level VARCHAR(255);

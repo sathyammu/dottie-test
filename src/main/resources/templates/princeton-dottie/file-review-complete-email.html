@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Underwriter Review Complete</title>
+
+  <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f6f8;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #000000;
+    }
+    table { border-collapse: collapse; }
+
+    .container {
+        width: 100%;
+        padding: 24px 0;
+    }
+
+    .email {
+        width: 720px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+    }
+
+    .header {
+        background-color: #1f3a5f;
+        color: #ffffff;
+        padding: 16px 24px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .content {
+        padding: 24px;
+    }
+
+    .section-title {
+        margin-top: 28px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #1f3a5f;
+        border-bottom: 1px solid #dcdcdc;
+        padding-bottom: 6px;
+    }
+
+    .group-title {
+        margin-top: 18px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #1f3a5f;
+    }
+
+    .condition {
+        margin-top: 12px;
+    }
+
+    .condition-title {
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
+
+    .condition-meta {
+        font-size: 12px;
+        color: #555555;
+        margin-bottom: 6px;
+    }
+
+    .condition-desc {
+        line-height: 1.45;
+        margin-bottom: 6px;
+    }
+
+    .condition-comment {
+        margin-left: 12px;
+        font-style: italic;
+        color: #333333;
+    }
+
+    .rejected {
+        background-color: #fff4f4;
+        border-left: 4px solid #d32f2f;
+        padding-left: 12px;
+    }
+
+    /* Loan Snapshot */
+.snapshot-table td {
+    padding-bottom: 6px;
+    vertical-align: top;
+}
+.snapshot-label {
+    font-weight: bold;
+    width: 180px;
+}
+  </style>
+</head>
+
+<body>
+
+<table class="container" width="100%" align="left">
+  <tr>
+    <td align="left">
+
+      <table class="email">
+
+        <!-- HEADER -->
+        <tr>
+          <td class="header">
+            Underwriter Review Complete
+          </td>
+        </tr>
+
+        <!-- CONTENT -->
+        <tr>
+          <td class="content">
+
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+              <tr>
+                <td style="width: 140px; padding-bottom: 6px; font-weight: bold;">
+                  Review Date:
+                </td>
+                <td style="padding-bottom: 6px;">
+                  <span th:text="${#temporals.format(reviewDate,'MM/dd/yyyy')}">12/23/2025</span>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="font-weight: bold;">
+                  Underwriter:
+                </td>
+                <td>
+                  <span th:text="${underwriterName}">Lisa Casanova</span>
+                </td>
+              </tr>
+            </table>
+
+            <!-- SUMMARY -->
+            <div class="section-title">Summary</div>
+
+            <p>
+              <strong>Borrower Conditions Remaining:</strong>
+              <span th:text="${borrowerRemainingCount}"></span><br/>
+
+              <strong>Conditions Cleared This Review:</strong>
+              <span th:text="${clearedCount}"></span>
+            </p>
+
+            <p>
+              <a th:href="${dottieLink}">View full condition list in Dottie</a>
+            </p>
+
+            <!-- APPROVAL CONDITIONS -->
+            <div th:if="${showApproval}">
+              <div class="section-title">Approval Conditions Remaining</div>
+
+              <div th:each="group : ${approvalGroups}">
+                <div class="group-title">
+                  <span th:text="${group.key}"></span>
+                  (
+                  <span th:text="${#lists.size(group.value)}"></span>
+                  )
+                </div>
+
+                <div th:each="c : ${group.value}" class="condition">
+                  <div class="condition-title" th:text="${c.title}"></div>
+                  <div class="condition-meta">
+                    <span th:text="${c.priorTo}"></span> |
+                    <span th:text="${c.category}"></span> |
+                    <span th:text="${c.status}"></span>
+                    on
+                    <span th:text="${#temporals.format(c.statusDate,'MM/dd/yyyy')}"></span>
+                  </div>
+                  <div class="condition-desc" th:text="${c.description}"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- REJECTED CONDITIONS -->
+            <div th:if="${showRejected}">
+              <div class="section-title">
+                🚩 Rejected Conditions
+              </div>
+
+              <div th:each="group : ${rejectedConditions}">
+                <div class="group-title">
+                  <span th:text="${group.key}"></span>
+                  (
+                  <span th:text="${#lists.size(group.value)}"></span>
+                  )
+                </div>
+
+                <div th:each="c : ${group.value}" class="condition rejected">
+                  <div class="condition-title" th:text="${c.title}"></div>
+
+                  <div class="condition-meta">
+                    <span th:text="${c.priorTo}"></span> |
+                    <span th:text="${c.category}"></span> |
+                    <strong>Rejected</strong>
+                    on
+                    <span th:text="${#temporals.format(c.statusDate,'MM/dd/yyyy')}"></span>
+                  </div>
+
+                  <div class="condition-desc" th:text="${c.description}"></div>
+
+                  <div th:if="${c.comment != null and !#strings.isEmpty(c.comment)}"
+                       class="condition-comment">
+                    Comment:
+                    <span th:text="${c.comment}"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BORROWER CONDITIONS -->
+            <div th:if="${showBorrower}">
+              <div class="section-title">Borrower Conditions Remaining</div>
+
+              <div th:each="group : ${borrowerGroups}">
+                <div class="group-title">
+                  <span th:text="${group.key}"></span>
+                  (
+                  <span th:text="${#lists.size(group.value)}"></span>
+                  )
+                </div>
+
+                <div th:each="c : ${group.value}" class="condition">
+                  <div class="condition-title" th:text="${c.title}"></div>
+                  <div class="condition-meta">
+                    <span th:text="${c.priorTo}"></span> |
+                    <span th:text="${c.category}"></span> |
+                    <span th:text="${c.status}"></span>
+                    on
+                    <span th:text="${#temporals.format(c.statusDate,'MM/dd/yyyy')}"></span>
+                  </div>
+                  <div class="condition-desc" th:text="${c.description}"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- INTERNAL CONDITIONS -->
+            <div th:if="${showInternal}">
+              <div class="section-title">Internal Conditions</div>
+
+              <div th:each="group : ${internalGroups}">
+                <div class="group-title">
+                  <span th:text="${group.key}"></span>
+                  (
+                  <span th:text="${#lists.size(group.value)}"></span>
+                  )
+                </div>
+
+                <div th:each="c : ${group.value}" class="condition">
+                  <div class="condition-title" th:text="${c.title}"></div>
+                  <div class="condition-meta">
+                    <span th:text="${c.priorTo}"></span> |
+                    <span th:text="${c.category}"></span> |
+                    <span th:text="${c.status}"></span>
+                    on
+                    <span th:text="${#temporals.format(c.statusDate,'MM/dd/yyyy')}"></span>
+                  </div>
+                  <div class="condition-desc" th:text="${c.description}"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== LOAN SNAPSHOT (NEW) ===== -->
+            <div class="section-title">Your Loan Snapshot</div>
+
+            <table class="snapshot-table" width="100%" cellpadding="0" cellspacing="0">
+
+              <!-- Loan Amount -->
+              <tr th:if="${loanAmount != null}">
+                <td class="snapshot-label">Loan Amount:</td>
+                <td th:text="${loanAmount}"></td>
+              </tr>
+
+              <!-- Interest Rate -->
+              <tr th:if="${interestRate != null}">
+                <td class="snapshot-label">Interest Rate:</td>
+                <td th:text="${interestRate}"></td>
+              </tr>
+
+              <!-- Rate Lock Expires -->
+              <tr th:if="${rateLockDate != null}">
+                <td class="snapshot-label">Rate Lock Expires:</td>
+                <td th:text="${rateLockDate}"></td>
+              </tr>
+
+              <!-- Processor -->
+              <tr th:if="${processorName != null or processorEmail != null or processorPhone != null}">
+                <td class="snapshot-label">Processor:</td>
+                <td>
+                  <span th:if="${processorName != null}" th:text="${processorName}"></span>
+                  <span th:if="${processorEmail != null}">
+      - <span th:text="${processorEmail}"></span>
+    </span>
+                  <span th:if="${processorPhone != null}"> - <span th:text="${processorPhone}"></span>
+    </span>
+                </td>
+              </tr>
+
+              <!-- Loan Officer Assistant -->
+              <tr th:if="${loaName != null or loaEmail != null or loaPhone != null}">
+                <td class="snapshot-label">Loan Officer Assistant:</td>
+                <td>
+                  <span th:if="${loaName != null}" th:text="${loaName}"></span>
+                  <span th:if="${loaEmail != null}">
+      - <span th:text="${loaEmail}"></span>
+    </span>
+                  <span th:if="${loaPhone != null}">
+      - <span th:text="${loaPhone}"></span>
+    </span>
+                </td>
+              </tr>
+
+              <!-- Loan Officer -->
+              <tr th:if="${loFullName != null or loEmail != null or loPhone != null}">
+                <td class="snapshot-label">Loan Officer:</td>
+                <td>
+                  <span th:if="${loFullName != null}" th:text="${loFullName}"></span>
+                  <span th:if="${loEmail != null}">
+      - <span th:text="${loEmail}"></span>
+    </span>
+                  <span th:if="${loPhone != null}">
+      - <span th:text="${loPhone}"></span>
+    </span>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

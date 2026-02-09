@@ -1,0 +1,1 @@
+ALTER TABLE document_metadata add column extras jsonb default null;

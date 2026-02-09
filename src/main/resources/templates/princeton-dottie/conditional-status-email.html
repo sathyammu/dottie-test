@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<title>Conditional Loan Status</title>
+
+<style type="text/css">
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000000;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.container {
+    width: 100%;
+    padding: 30px 0;
+    background-color: #f4f6f8;
+}
+
+.email-body {
+    width: 700px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+}
+
+.header {
+    background-color: #1f3a5f;
+    color: #ffffff;
+    padding: 16px 24px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.content {
+    padding: 24px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1f3a5f;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 6px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+}
+
+.condition-table {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.condition-header {
+    font-weight: bold;
+    padding-bottom: 4px;
+}
+
+.condition-meta {
+    font-size: 12px;
+    color: #555555;
+    padding-bottom: 6px;
+}
+
+.condition-desc {
+    padding-bottom: 6px;
+}
+
+.condition-comment {
+    font-style: italic;
+    font-weight: bold;
+    color: #333333;
+}
+
+/* Loan Snapshot */
+.snapshot-table td {
+    padding-bottom: 6px;
+    vertical-align: top;
+}
+.snapshot-label {
+    font-weight: bold;
+    width: 180px;
+}
+
+</style>
+</head>
+
+<body>
+
+<table class="container" width="100%" align="left">
+<tr>
+<td align="left">
+
+<table class="email-body">
+
+<!-- HEADER -->
+<tr>
+<td class="header" th:text="${header}">
+Conditional Loan Approval
+</td>
+</tr>
+
+<!-- CONTENT -->
+<tr>
+<td class="content">
+
+<!-- ===== LOAN SUMMARY ===== -->
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+<tr>
+<td style="width: 120px; padding-bottom: 6px; font-weight: bold;">
+Status:
+</td>
+<td style="padding-bottom: 6px;">
+<span th:text="${loanStatus}">Conditionally Approved</span>
+</td>
+</tr>
+
+<tr>
+<td style="padding-bottom: 6px; font-weight: bold;">
+Date:
+</td>
+<td style="padding-bottom: 6px;">
+<span th:text="${loanStatusDate}">12/23/2025</span>
+</td>
+</tr>
+
+<tr>
+<td style="font-weight: bold;">
+Underwriter:
+</td>
+<td>
+<span th:text="${underwriterName}">Lisa Casanova</span>
+</td>
+</tr>
+</table>
+
+<!-- INTRO -->
+<p th:utext="${introText}"></p>
+
+<!-- DOTTIE LINK -->
+<p>
+View the full and most up-to-date condition list in Dottie:<br />
+<a th:href="${dottieLink}">Open Loan Conditions</a>
+</p>
+
+<!-- ===== CONDITIONS ===== -->
+<div th:each="group : ${groupedConditions}">
+
+<div class="section-title">
+<span th:text="${group.key}">Approval</span>
+(
+<span th:text="${#lists.size(group.value)}">0</span>
+)
+</div>
+
+<table class="condition-table" th:each="c : ${group.value}">
+<tr>
+<td class="condition-header" th:text="${c.title}">
+Condition Title
+</td>
+</tr>
+
+<tr>
+<td class="condition-meta">
+<span th:text="${c.priorTo}">Approval</span>
+&nbsp;|&nbsp;
+<span th:text="${c.category}">Assets</span>
+&nbsp;|&nbsp;
+<span th:text="${c.status}">Added</span>
+on
+<span th:text="${#temporals.format(c.statusDate, 'MM/dd/yyyy')}">
+12/09/2025
+</span>
+</td>
+</tr>
+
+<tr>
+<td class="condition-desc" th:text="${c.description}">
+Condition description
+</td>
+</tr>
+
+<tr th:if="${c.comment != null and !#strings.isEmpty(c.comment)}">
+<td class="condition-comment">
+Comment:
+<span th:text="${c.comment}"></span>
+</td>
+</tr>
+</table>
+
+</div>
+
+<!-- ===== LOAN SNAPSHOT (NEW) ===== -->
+<div class="section-title">Your Loan Snapshot</div>
+
+<table class="snapshot-table" width="100%" cellpadding="0" cellspacing="0">
+
+<!-- Loan Amount -->
+<tr th:if="${loanAmount != null}">
+<td class="snapshot-label">Loan Amount:</td>
+<td th:text="${loanAmount}"></td>
+</tr>
+
+<!-- Interest Rate -->
+<tr th:if="${interestRate != null}">
+<td class="snapshot-label">Interest Rate:</td>
+<td th:text="${interestRate}"></td>
+</tr>
+
+<!-- Rate Lock Expires -->
+<tr th:if="${rateLockDate != null}">
+<td class="snapshot-label">Rate Lock Expires:</td>
+<td th:text="${rateLockDate}"></td>
+</tr>
+
+<!-- Processor -->
+<tr th:if="${processorName != null or processorEmail != null or processorPhone != null}">
+<td class="snapshot-label">Processor:</td>
+<td>
+<span th:if="${processorName != null}" th:text="${processorName}"></span>
+<span th:if="${processorEmail != null}">
+      - <span th:text="${processorEmail}"></span>
+    </span>
+<span th:if="${processorPhone != null}"> - <span th:text="${processorPhone}"></span>
+    </span>
+</td>
+</tr>
+
+<!-- Loan Officer Assistant -->
+<tr th:if="${loaName != null or loaEmail != null or loaPhone != null}">
+<td class="snapshot-label">Loan Officer Assistant:</td>
+<td>
+<span th:if="${loaName != null}" th:text="${loaName}"></span>
+<span th:if="${loaEmail != null}">
+      - <span th:text="${loaEmail}"></span>
+    </span>
+<span th:if="${loaPhone != null}">
+      - <span th:text="${loaPhone}"></span>
+    </span>
+</td>
+</tr>
+
+<!-- Loan Officer -->
+<tr th:if="${loFullName != null or loEmail != null or loPhone != null}">
+<td class="snapshot-label">Loan Officer:</td>
+<td>
+<span th:if="${loFullName != null}" th:text="${loFullName}"></span>
+<span th:if="${loEmail != null}">
+      - <span th:text="${loEmail}"></span>
+    </span>
+<span th:if="${loPhone != null}">
+      - <span th:text="${loPhone}"></span>
+    </span>
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

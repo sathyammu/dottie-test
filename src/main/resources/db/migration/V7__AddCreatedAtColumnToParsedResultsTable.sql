@@ -1,0 +1,1 @@
+  alter TABLE parse_pagination_results  add column created_at timestamptz NOT NULL default now();

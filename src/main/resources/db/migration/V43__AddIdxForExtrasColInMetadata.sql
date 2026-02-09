@@ -1,0 +1,1 @@
+CREATE INDEX idx_document_metadata_extras ON document_metadata USING GIN ((extras->'testableIn'));

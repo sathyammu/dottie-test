@@ -1,0 +1,1 @@
+alter table extraction_hubs add column IF NOT EXISTS strategy text default 'CONTENT_UNDERSTANDING';

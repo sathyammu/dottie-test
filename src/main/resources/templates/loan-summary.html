@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #000; margin: 20px; }
+    h1 { font-size: 20px; margin-bottom: 5px; }
+    h2 { font-size: 16px; margin-bottom: 8px; }
+    h3 { font-size: 14px; margin: 8px 0 4px 0; display: flex; align-items: center; gap: 6px; }
+    .title-row { display: flex; justify-content: space-between; align-items: center; }
+    .loan-meta div { margin-bottom: 2px; }
+    .section-title { margin: 20px 0 10px 0; font-weight: bold; font-size: 16px; }
+    .item-title { font-weight: bold; font-size: 12px; margin: 0; padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+    .meta-line { font-size: 12px; margin: 0; padding: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    td { vertical-align: top; padding: 8px 12px 8px 0; }
+
+    @page {
+  size: A4 portrait;
+  margin: 8px 10px 8px 10px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 12px;  /* smaller text fits more */
+  line-height: 1.2; /* tighter spacing */
+  color: #000;
+}
+
+.sheet {
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, tr, td, div {
+  page-break-inside: avoid;
+}
+
+.page-break {
+  display: none;
+}
+
+/* Reduce spacing between sections */
+.section-title {
+  margin: 10px 0 5px 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.item-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 2px 0;
+}
+
+.meta-line {
+  font-size: 9px;
+  margin: 1px 0;
+}
+
+/* Legend dots */
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 2px;
+}
+.ld-not { background: #ccc; }
+    .ld-progress { background: #2196f3; }
+    .ld-due { background: #ffeb3b; }
+    .ld-past { background: #f44336; }
+    .ld-complete {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      background-image: url('Completed.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 0;
+    }
+    .ld-disabled { background: #d3d3d3; opacity: 0.6; }
+    .ld-complete-green { background: #4CAF50 !important; }
+    .subsection-title { text-decoration: underline; }
+
+  </style>
+</head>
+<body>
+<div class="sheet">
+  <div th:each="loan, iterStat : ${loans}">
+    <!-- Header -->
+    <div class="title-row">
+      <table style="width:100%">
+        <tr>
+          <td style="text-align:left">
+            <h1>
+              Loan #<span th:text="${#strings.substring(loan.loan.fields['Loan.LoanNumber'], loan.loan.fields['Loan.LoanNumber'].length() - 5)}"></span>
+              [<span th:text="${loan.loan.fields['Fields.4002']}"></span>] -
+              <span th:text="${loan.loan.fields['Loan.CurrentMilestoneName']}"></span>
+            </h1>
+          </td>
+          <td style="text-align:right; white-space:nowrap;">
+            <a th:href="${dashboardUrl}">Dashboard</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Loan Information -->
+    <div class="loan-info">
+      <h2>Loan Information</h2>
+      <div class="loan-meta">
+        <div><strong>Borrower:</strong> <span th:text="${loan.loan.fields['Fields.4002']}"></span></div>
+        <div><strong>Processor:</strong> <span th:text="${loan.fields['Fields.LoanTeamMember.Name.Loan Processor']}"></span></div>
+        <div><strong>Loan Officer:</strong> <span th:text="${loan.fields['Fields.317']}"></span></div>
+        <div><strong>Projected Closing:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.763']})"></span></div>
+        <div><strong>Current Milestone:</strong>
+          <span th:text="${loan.fields['Loan.CurrentMilestoneName']}"></span>
+          (<span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.MS.STATUSDATE']})"></span>)
+        </div>
+        <div><strong>Dead in the Water:</strong> <span th:text="${loan.fields['Fields.DEAD_IN_THE_WATER']}">0</span></div>
+      </div>
+    </div>
+
+    <!-- Milestone Progress (12 sections) -->
+    <h3>Milestone Progress</h3>
+    <table>
+      <tr>
+        <!-- Disclosures -->
+        <td>
+          <h3>Disclosures <span class="legend-dot" th:classappend="${loan.sectionStatus['Disclosures']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Disclosures Sent</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['DISCLOSURES_SENT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.DISCLOSURES']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.3152']})"></span>
+          </div>
+
+          <div class="item-title"><span class="subsection-title">ITP Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['ITP_RECEIVED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.ITP']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.3197']})"></span>
+          </div>
+        </td>
+
+        <!-- Appraisal -->
+        <td>
+          <h3>Appraisal <span class="legend-dot" th:classappend="${loan.sectionStatus['Appraisal']}"></span></h3>
+
+          <div th:if="${loan.fields['Fields.APPRAISAL_PIW_NOTE'] == 'PIW'}">
+            <div class="item-title"><span class="subsection-title">PIW</span>
+              <span class="ld-complete"></span>
+            </div>
+            <div class="meta-line">No Due Date</div>
+          </div>
+          <div class="item-title"><span class="subsection-title">Appraisal Ordered</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['APPRAISAL_ORDERED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.APPRAISAL']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.2352']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Appraisal Paid</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['APPRAISAL_PAID']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.APPRAISAL.PAID']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.APPR.VA.INVPAID']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Inspection Scheduled</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['APPRAISAL_SCHEDULED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.APPRAISAL.SCHED']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.REG.APP.INSP.DT']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Appraisal Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['APPRAISAL_RECEIVED']}"></span>
+            <span th:if="${loan.loan.fields['Fields.APPRAISAL_PIW_NOTE'] == 'PIW'}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.APPRAISAL.RECD']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Document.DateReceived.Appraisal']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Appraisal Cleared</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['APPRAISAL_CLEARED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.APPRAISAL.CLEAR']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.2353']})"></span></div>
+        </td>
+
+        <!-- Title -->
+        <td>
+          <h3>Title <span class="legend-dot" th:classappend="${loan.sectionStatus['Title']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Title Ordered</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['TITLE_ORDERED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.TITLE.ORDER']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CUST21FV']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Title Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['TITLE_RECEIVED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.TITLE.RECD']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CUST22FV']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Title Cleared</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['TITLE_CLEARED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.TITLE.CLEAR']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Condition.DateCleared.Property - Title Commitment']})"></span></div>
+        </td>
+      </tr>
+
+      <!-- Row 2: HOI / Init Approval / Locked -->
+      <tr>
+        <!-- HOI -->
+        <td>
+          <h3>HOI <span class="legend-dot" th:classappend="${loan.sectionStatus['HOI']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">HOI Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['HOI_RECEIVED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.HOI.RECD']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Document.DateReceived.Property - Homeowners Insurance Policy']})"></span>
+          </div>
+
+          <div class="item-title"><span class="subsection-title">HOI Cleared</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['HOI_CLEARED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.HOI.CLEAR']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Condition.DateCleared.Property - Homeowners Insurance Policy']})"></span>
+          </div>
+        </td>
+
+        <!-- Initial Approval -->
+        <td>
+          <h3>Init. Approval <span class="legend-dot" th:classappend="${loan.sectionStatus['InitApproval']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Submit for Initial Approval</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['INIT_SUBMIT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.SUB.UW']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Log.MS.Date.Submit to UW']})"></span>
+          </div>
+
+          <div class="item-title"><span class="subsection-title">Initial Approval Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['INIT_APPROVAL']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.COND.APP']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.2301']})"></span>
+          </div>
+        </td>
+
+        <!-- Locked -->
+        <td>
+          <h3>Locked <span class="legend-dot" th:classappend="${loan.sectionStatus['Locked']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Lock Request Completed</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['LOCKED']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong>
+            <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.LOCK']})"></span>
+          </div>
+          <div class="meta-line"><strong>Completed:</strong>
+            <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.761']})"></span>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Row 3: Borrower CTC / Collateral CTC / Final CTC -->
+      <tr>
+        <td>
+          <h3>Borr. CTC <span class="legend-dot" th:classappend="${loan.sectionStatus['BorrCTC']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Borrower CTC Submitted</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['BORR_SUBMIT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.BORR.CONDITION']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.BCSUBMIT.ACTUAL']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Borrower CTC Approved</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['BORR_CLEAR']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.BORR.COND.CLEAR']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.COND.BORR.CLEAR.DATE']})"></span></div>
+        </td>
+
+        <td>
+          <h3>Coll. CTC <span class="legend-dot" th:classappend="${loan.sectionStatus['CollCTC']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Collateral CTC Submitted</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['COLL_SUBMIT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.COLL.CONDITION']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.PCSUBMIT.ACTUAL']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Collateral CTC Approved</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['COLL_CLEAR']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.COLL.COND.CLEAR']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.COND.PROP.CLEAR.DATE']})"></span></div>
+        </td>
+
+        <td>
+          <h3>Final CTC <span class="legend-dot" th:classappend="${loan.sectionStatus['FinalCTC']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Final CTC Submitted</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['FINAL_SUBMIT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.CTC.SUBMIT']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.FINAL.SUBMIT.ACTUAL']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Final CTC Approved</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['FINAL_CLEAR']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.CTC.CLEAR']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.2305']})"></span></div>
+        </td>
+      </tr>
+
+      <!-- Row 4: Init. CD / Final Verbal / Closing -->
+      <tr>
+        <td>
+          <h3>Init. CD <span class="legend-dot" th:classappend="${loan.sectionStatus['InitCD']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Initial CD Requested</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['ICD_REQUEST']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.ICD.REQ']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.EARLYCD.DATE']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Initial CD Sent</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['ICD_SENT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.CDSEND.DEADLINE']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.3977']})"></span></div>
+        </td>
+
+        <td>
+          <h3>Final Verbal <span class="legend-dot" th:classappend="${loan.sectionStatus['FinalVerbal']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Final Verbal Received</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['FINAL_VERBAL']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.VVOE']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.CX.VVOE.RECD.DT']})"></span></div>
+        </td>
+
+        <td>
+          <h3>Closing <span class="legend-dot" th:classappend="${loan.sectionStatus['Closing']}"></span></h3>
+
+          <div class="item-title"><span class="subsection-title">Closing Docs Submitted</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['CLOSING_SUBMIT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.2.CLOSING']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Log.MS.Date.Ready for Docs']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Closing Docs Sent</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['CLOSING_SENT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.DOCSENT']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.Log.MS.Date.Docs Signing']})"></span></div>
+
+          <div class="item-title"><span class="subsection-title">Funds Sent</span>
+            <span class="legend-dot" th:classappend="${loan.subStatus['CLOSING_FUNDS_SENT']}"></span>
+          </div>
+          <div class="meta-line"><strong>Due:</strong> <span th:replace="fragments/date-display :: dueDate(${loan.fields['Fields.CX.DUE.DOCSENT']})"></span></div>
+          <div class="meta-line"><strong>Completed:</strong> <span th:replace="fragments/date-display :: completedDate(${loan.fields['Fields.1997']})"></span></div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Legend -->
+    <div style="margin-top: 20px; text-align: center;">
+      <table style="margin: 0 auto; border-spacing: 10px 0; font-size: 12px;" class="legend-table">
+        <tr class="legend-container">
+          <td class="legend-pair"><b>Legend</b></td>
+          <td class="legend-pair"><span class="legend-dot ld-not"></span> Not Started</td>
+          <td class="legend-pair"><span class="legend-dot ld-progress"></span> In Progress</td>
+          <td class="legend-pair"><span class="legend-dot ld-due"></span> Due Today</td>
+          <td class="legend-pair"><span class="legend-dot ld-past"></span> Past Due</td>
+          <td class="legend-pair"><span class="ld-complete"></span> Complete</td>
+        </tr>
+      </table>
+    </div>
+
+    <div th:if="${!iterStat.last}" class="page-break"></div>
+  </div>
+</div>
+</body>
+</html>

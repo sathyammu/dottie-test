@@ -1,0 +1,1 @@
+alter table document_metadata add column is_tenant_owned_blob boolean default false;

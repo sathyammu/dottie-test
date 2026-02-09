@@ -1,0 +1,236 @@
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  packagesToScan: com.brimmatech.apps.deapi.controller
+  swagger-ui:
+    path: /welcome
+    url: /v3/api-docs
+    server-item-url: ${DOC_INTEL_SWAGGER_CONTEXT_PATH}
+  info: Vallia DocIntel
+#    disable-swagger-default-url: true
+#  api-docs.path: /
+
+# management:
+#   server:
+#     port: 9090
+#   endpoints:
+#     web.exposure.include: openapi, swagger-ui
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    url: ${DATABASE_URL}
+    driver-class-name: ${DATABASE_DRIVER_CLASS}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 900000
+      connection-timeout: 10000
+      leak-detection-threshold: 0
+      max-lifetime: 30000
+      poolName: "orchestrator-local"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      format-sql: true
+      globally_quoted_identifiers: true
+      connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        type: trace
+  service-bus:
+    enabled: ${ENABLE_SERVICE_BUS}
+    connection-string: ${DOC_FLOW_BUS_URL}
+    classifier-queue-name: ${DOC_CLASSIFIER_QUEUE_NAME}
+    webhook-event-queue-name: ${WEBHOOK_EVENT_QUEUE_NAME}
+
+api:
+  encompass:
+    host: https://api.elliemae.com/
+    endpoint:
+      generate-print-order-url: /encompassdocs/v1/documentOrders/ondemand
+      retrieve-print-order-url: /encompassdocs/v1/documentOrders/ondemand/{orderId}
+      token-uri: oauth2/v1/token
+      fetch-loan: /encompass/v3/loans/{loanGuid}
+      fetch-loan-uri: /encompass/v1/loans/{loanGuid}/fieldReader
+      simple-pipeline-query: /encompass/v3/loanPipeline
+      fetch-all-document-uri: /encompass/v3/loans/{LoanGuid}/documents?includeRemoved=false
+      create-document-uri: /encompass/v3/loans/{LoanGuid}/documents?action=add&view=entity
+      add-comment-uri: /encompass/v3/loans/{LoanGuid}/documents/{documentId}/comments?action=add&view=entity
+      retrieve-lock-uri: /encompass/v1/resourceLocks
+      unlock-resource-uri: /encompass/v1/resourceLocks/{LockId}
+      lock-resource-uri: /encompass/v1/resourceLocks?view=id
+      update-loan-uri: /encompass/v3/loans/{LoanGuid}?view=entity
+      fetch-document-attachment: /encompass/v1/loans/{LoanGuid}/documents/{DocumentId}/attachments
+      fetch-attachment-detail: /encompass/v1/loans/{LoanGuid}/attachments/{AttachmentId}
+      fetch-attachment-download-url-detail: /encompass/v3/loans/{LoanGuid}/attachmentDownloadUrl
+      field-writer-uri: /encompass/v3/loans/{LoanGuid}/fieldWriter
+      enhanced-condition-update-uri: /encompass/v3/loans/{loanGuid}/conditions
+      remove-document-attachment: /encompass/v3/loans/{LoanGuid}/attachments?action=remove
+  pluto-querier:
+    endpoint:
+      fetch-purchase-advice-document-fields: ${FETCH_PURCHASE_ADVICE_DOCUMENT_FIELDS:v2/get-field-details}
+      fetch-purchase-condition-request: ${FETCH_PURCHASE_CONDITION_REQUEST:v2/get-enhanced-condition-details}
+  los-service:
+    host: ${LOS_SERVICE_BASE_URL:https://vallia-docflow-losservice-as.azurewebsites.net/}
+    attachment-upload-url: losservice/api/v1/Document/{tenantId}/upload?loanGuid={loanGuid}&sorName={sorName}
+  message-processor:
+    base-url: ${BASE_URL:https://brimma-vallia-docflow-ruleengine-dev-as.azurewebsites.net/docflow-events-publisher}
+    post-message-uri: /api/post-message
+mail:
+  hostname: ${MAIL_HOST:smtp.office365.com}
+  port: ${MAIL_PORT:587}
+  smtp_auth_enabled: true
+  smtp_tls_enabled: true
+  username: ${MAIL_USERNAME:test@brimmapa.onmicrosoft.com}
+  password: ${MAIL_PASSWORD:Xuy57460}
+  to_addresses: ${MAIL_TO:gokulp@brimmatech.com}
+  cc_addresses: ${MAIL_CC:gokulp@brimmatech.com}
+  subject: ERROR MESSAGE - Loan Locked Regarding
+  provider: ${MAIL_PROVIDER:OUTLOOK}
+  tls_protocol: ${MAIL_TLS_PROTOCOL:TLSv1.2}
+  connectionTimeout: ${MAIL_CONNECTION_TIMEOUT:100000}
+  ssl_protocol: ${MAIL_SSL_PROTOCOL:smtp}
+app:
+  rpa:
+    connection-url: https://prod-24.westus.logic.azure.com:443/workflows/49bc51a22e6f467daf0db2cf18976270/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=CJOaIy-qXVHxs6EeGPmJI02skzXvpyayaUSBG3ZS878
+  rule-engine:
+    scheduler-enabled: ${EVALUATION_ENABLED:false}
+    evaluation-cron-exp: ${EVALUATION_CRON_EXPRESSION:0 0/1 0 * * ?}
+  crypto:
+    encryption-algorithm: AES/ECB/PKCS5Padding
+    encryption-key: WEc#HCt<mC)Sw7(
+    algorithm: AES
+    length: 16
+    message-digest-algorithm: SHA-1
+
+  blob:
+    connection-string: ${CONNECTION_STRING:DefaultEndpointsProtocol=https;AccountName=brimmastorage;AccountKey=oZm68ofh4H9IeyXA4VGXIZpHr0WRN+oD8Uwx+ID0bDCrXIMcRnLv5jgcX6DXTD9aay/H6gyUOieBaT3K47c55w==;EndpointSuffix=core.windows.net}
+    container-name: ${CONTAINER_NAME:vallia-docflow}
+  v2:
+    json-rule-engine-url: ${RULE_ENGINE_URL:https://vallia-docflow-rule-engine-node-dev-as.azurewebsites.net}
+
+azure_chat:
+  endpoint: https://brimma-vallia-ai-dev-oa.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-08-01-preview
+  langChainEndpoint: https://brimma-vallia-ai-dev-oa.openai.azure.com
+  app_key: ${AZURE_AI_CHATBOT_API_KEY}
+
+azure_form_recognizer:
+  endpoint: ${AZURE_DOC_EXTRACTION_ENDPOINT}
+  app_key: ${AZURE_DOC_EXTRACTION_API_KEY}
+azure_document_classification:
+  split_mode: ${AZURE_DOC_CLASSIFICATION_SPLIT_MODE:auto}
+  endpoint: ${AZURE_DOC_CLASSIFICATION_ENDPOINT:https://valliadocai.cognitiveservices.azure.com}
+  model-id: ${AZURE_DOC_CLASSIFICATION_MODEL_ID:vallia-docai-dc_model_v1.4.0}
+  ocp-subscription-key: ${OCP_APIM_SUBSCRIPTION_KEY:5c5c1c0b3a124f918bc80ddefea00f5f}
+langchain4j.open-ai.chat-model.log-requests: true
+langchain4j.open-ai.chat-model.log-responses: true
+logging:
+  level:
+    root: INFO
+    dev:
+      langchain4j: DEBUG
+      ai4j.openai4j: DEBUG
+    org.hibernate: ERROR
+    # com.zaxxer.hikari: DEBUG
+    com.brimmatech.backgroundservices: OFF
+    com.brimmatech: DEBUG
+    org.springframework.security: DEBUG
+
+spring.flyway.locations: filesystem:db/migration
+
+spring.flyway.password: ${DATABASE_PASSWORD:brimma-admin}
+
+spring.flyway.schemas: public
+
+spring.flyway.url: ${DATABASE_URL:jdbc:postgresql://20.94.224.112:5432/vallia_docflow_dev}
+
+spring.flyway.user: ${DATABASE_USERNAME:postgres}
+
+info.app.name: DocFlow Rule Orchestrator/Engine.
+info.app.description: "There are two versions: Self Rule evaulation by EvalEx and JsonRulesEngine(Pluto)"
+info.app.version: 1.0.0
+
+spring.security:
+#  oauth2:
+#    resourceserver:
+#      jwt:
+#        issuer-uri: https://brimmatechb2c.b2clogin.com/1f3b8ab6-0234-4282-b19e-7a2e7c8d9ae7/v2.0/
+#        # audiences: '[92c97569-457d-45f2-a688-1d0236138c67]'
+#        jwk-set-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/b2c_1_signup_signin/discovery/v2.0/keys
+#    client:
+#      registration:
+#        azure_b2c_id_token:
+#          client-id: ${B2C_SWAGGER_CLIENT_ID}
+#          client-secret: ${B2C_SWAGGER_CLIENT_SECRET}
+#          authorization-grant-type: authorization_code
+#          redirect-uri: http://localhost:8081/login/oauth2/code/azure_dev
+#          scope: "openid,https://brimmatechb2c.onmicrosoft.com/docflow-api/doc.classify"
+#          # scope: openid,${B2C_SWAGGER_CLIENT_ID}
+#
+#      provider:
+#        azure_b2c_id_token:
+#          # issuer-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/v2.0/.well-known/openid-configuration
+#          authorization-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/authorize
+#          token-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/token
+#          jwk-set-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/b2c_1_signup_signin/discovery/v2.0/keys
+#          user-name-attribute: sub
+#          user-info-uri:
+
+      # registration:
+      #   azure_b2c_access_token:
+      #     client-id: ${B2C_SWAGGER_CLIENT_ID}
+      #     client-secret: ${B2C_SWAGGER_CLIENT_SECRET}
+      #     authorization-grant-type: authorization_code
+      #     redirect-uri: http://localhost:8081/login/oauth2/code/azure_dev
+      #     scope: https://brimmatechb2c.onmicrosoft.com/docflow-api/doc.classify
+
+      # provider:
+      #   azure_b2c_access_token:
+      #     # issuer-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/v2.0/.well-known/openid-configuration
+      #     authorization-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/authorize
+      #     token-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/token
+      #     jwk-set-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/b2c_1_signup_signin/discovery/v2.0/keys
+      #     user-name-attribute: sub
+      #     user-info-uri:
+# azure:
+#   activedirectory:
+#     # Specifies your Active Directory ID:
+#     tenant-id: ${B2C_TENANT_ID}
+#     # Specifies your App Registration's Application ID:
+#     client-id: ${B2C_SWAGGER_CLIENT_ID}
+#     # Specifies your App Registration's secret key:
+#     client-secret: ${B2C_SWAGGER_CLIENT_SECRET}
+#     # Specifies the post-log-out-redirect-uri, where to return your app after logout.
+#     post-logout-redirect-uri: http://localhost:8081
+#     # Specifies the Microsoft Graph scopes that your app needs access to - not required in this app.
+#     authorization-clients:
+#       web-api:
+#         scopes: api://${B2C_API_CLIENT_ID}/access_as_user
+
+# # which routes to restrict to authenticated users only (see SecurityConfig.java):
+# # enter String array (comma-separated) or just one route.
+# # e.g. authenticated: /route1, /route2, /route3
+# app:
+#   protect:
+#     authenticated: /token_details
+
+#   # The API to will call, and its endpoint
+#   api:
+#     base-address: http://localhost:8081
+#     date-endpoint: /dov/v1/hello

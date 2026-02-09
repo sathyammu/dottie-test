@@ -1,0 +1,45 @@
+# Latest version of this template can be found at
+# https://dev.azure.com/wilqo/Maiden%20Voyage%20Project/_git/CI-Templates?path=/azure-pipelines/java/base-templates/services
+trigger:
+  branches:
+    include:
+      - main
+      - release/*
+
+name: $(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+resources:
+ repositories:
+   - repository: templates
+     type: git
+     name: Maiden Voyage Project/CI-Templates
+
+stages:
+- template: azure-pipelines/maven/ci.service.v1.yml@templates
+  parameters:
+    imageName: docflow-rule-engine
+    buildFilePatterns: |
+      src/deploy/Dockerfile
+      src/deploy/startup.sh
+      src/deploy/ssh/sshd_config
+      target/docflow-rule-engine-*.jar
+    flattenBuildFolders: true
+    dockerBuildArguments: --build-arg PLAYWRIGHT_VERSION=1.52
+    autoDeployBranches:
+      - main
+    buildInputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean package -DskipTests'
+      options: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+      publishJUnitResults: true
+      mavenAuthenticateFeed: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      javaHomeOption: 'JDKVersion'
+      mavenVersionOption: 'Default'
+      mavenOptions: '-Xmx1024m'
+      sonarQubeRunAnalysis: false
+      pmdRunAnalysis: true
+    infraFilePatterns: '**'
+    regressionTestsFilePatterns: '**'
+    regressionTestsDirectory: src/regressions/download-and-test
+    filesToIgnoreForBuild: 'azure-pipelines\.yml,README\.md,CHANGELOG\.md,\.gitignore,\.dockerignore,\.editorconfig,\.vscode,^scripts/.*,json-schemas/.*,\.azuredevops/.*,\.snyk, \.src/api/*.hurl'

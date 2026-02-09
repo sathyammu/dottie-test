@@ -1,0 +1,52 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  storageAccountName: mystorageacct
+  fileShareName: playwrightshare
+  bicepTemplatePath: infra/prepare-file-shares.bicep
+  azureSubscription: 'My Azure Connection'  # replace with your service connection name
+  resourceGroupName: my-resource-group
+
+stages:
+  - stage: PrepareAndUpload
+    jobs:
+      - job: ProvisionAndUpload
+        displayName: Provision File Share and Upload Playwright
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Run Bicep to prepare file share'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment group create \
+                  --name fileShareProvision \
+                  --resource-group $(resourceGroupName) \
+                  --template-file $(bicepTemplatePath) \
+                  --parameters storageAccountName=$(storageAccountName) fileShareName=$(fileShareName)
+
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              curl -sSL https://aka.ms/install-playwright-deps | bash
+            displayName: 'Install Playwright dependencies'
+
+          - checkout: self
+
+          - script: |
+              chmod +x ./scripts/downloads.sh
+              ./scripts/downloads.sh
+            displayName: 'Run downloads.sh script'
+            env:
+              STORAGE_ACCOUNT_NAME: $(storageAccountName)
+              SHARE_NAME: $(fileShareName)
+              AZURE_STORAGE_KEY: $(azureStorageKey)  # store as secret in pipeline
