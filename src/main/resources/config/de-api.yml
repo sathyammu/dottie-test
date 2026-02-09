@@ -447,7 +447,6 @@ global:
 
 pa-ps:
   open-ai-assistant: ${PA_OPEN_AI_ASSISTANT_ENDPOINT:https://vallia-docflow-openai.openai.azure.com/}
-  open-ai-api-key: ${PA_OPEN_AI_API_KEY:88AXBEoRhSRhTR0MQL3dFhhsTTRFZj2yka2C8eyl05a6aFY6Z6Z0JQQJ99BGACYeBjFXJ3w3AAABACOGrDhr}
   open-ai-assistant-id: ${PA_ASSISTANT_ID:asst_wDuxkSMe3YTb8n9bAoBOMCIi}
 genie:
   config:
