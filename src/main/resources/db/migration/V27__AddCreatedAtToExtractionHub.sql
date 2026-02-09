@@ -1,1 +1,0 @@
-ALTER TABLE extraction_hubs add column if not exists created_at timestamp default null;
