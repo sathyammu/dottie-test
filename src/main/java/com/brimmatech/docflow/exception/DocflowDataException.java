@@ -36,7 +36,6 @@ public class DocflowDataException extends RuntimeException{
     @Getter
     public enum DocFlowErrorCodes {
         INTERNAL_ERROR,
-        TITLE_ORDER_FEE_UPDATE_PENDING,
         API_ERROR;
     }
 }

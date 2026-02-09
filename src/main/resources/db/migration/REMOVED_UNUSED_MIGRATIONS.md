@@ -18,3 +18,4 @@ The following migration scripts were removed because the tables are unused in th
 - V30__CreateSessionTable.sql
 - V35__AddLevelColumnInParsePagination.sql
 - V45__AddPolledLoans.sql
+    
