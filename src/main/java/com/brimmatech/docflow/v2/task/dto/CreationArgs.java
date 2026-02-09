@@ -73,9 +73,8 @@ public class CreationArgs {
 
     }
 
-
     @Builder public record TaskInputFromChangeLedger(@With int changeLedgerId, String modelType, Map<String,String> traceHeaders, @With
-                                                     DownloadStrategy downloadStrategy) {
+    DownloadStrategy downloadStrategy) {
     }
 
     @Builder public record EncompassStepInput(@With boolean isCompleted,
@@ -112,6 +111,14 @@ public class CreationArgs {
         }
     }
 
+    @Builder public record SyncWithGenieTaskInput(@With long orderId, @With GenieAction requestedAction) {
+        public static SyncWithGenieTaskInput defaults() {
+            return SyncWithGenieTaskInput.builder()
+                    .requestedAction(GenieAction.FeeUpdate)
+                    .build();
+        }
+    }
+
     public record SupervisorTerminationInput(int stepNumber, String topic) {
         public int nextStepNumber() {
             return stepNumber + 1;
@@ -125,6 +132,13 @@ public class CreationArgs {
         }
     }
 
+    @Builder public record GroupPagesTaskInput(
+            int docExId,
+            boolean shouldMockSplits,
+            Map<String,String> traceHeaders,
+            String level
+    ) {
+    }
 
     @Builder public record SplitTaskInput(int processingResultModelId,
                                           int docIndex,
@@ -188,7 +202,6 @@ public class CreationArgs {
                                          List<SuspensionSpecConfig.Entry> suspensionSpec) {
     }
 
-
     @Builder public record NotifyArgs(List<Integer> sequences, String notificationTopic) {
     }
 
@@ -214,6 +227,26 @@ public class CreationArgs {
                             .tenantId(input.tenantId())
                             .notificationTopic(input.notificationTopic)
                             .qualifier(input.parent().getQualifier())
+                            .build();
+            try {
+                return objectMapper.writeValueAsString(newArgs);
+            } catch (Exception e) {
+                return "{}";
+            }
+        }
+
+        public String childTaskInput(ChildTaskInput input, ObjectMapper objectMapper) {
+            val
+                    newArgs =
+                    TaskInputArgs.builder()
+                            .parent(parent)
+                            .runId(runId)
+                            .priority(input.priority)
+                            .qualifier(qualifier)
+                            .tenantId(tenantId)
+                            .creationArgs(input.creationArgs)
+                            .checkingSupervisor(input.checkingSupervisor)
+                            .notificationTopic(input.notificationTopic)
                             .build();
             try {
                 return objectMapper.writeValueAsString(newArgs);

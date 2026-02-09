@@ -18,6 +18,10 @@ public enum SettingsCategory {
 
     EMAIL_RX("email", "rx", null),
 
+    AUTH_API_KEY("auth", "api_key", new TypeReference<String>() {
+    }),
+
+    ENCOMPASS_ALIAS("encompass", "alias", null),
     //A3
     A3_CHAT_SETTINGS("a3", "chat_settings", null),
     A3_ASSISTANT_OVERLAYS("a3", "assistant_overlays", null),

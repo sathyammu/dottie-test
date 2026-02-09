@@ -39,7 +39,6 @@ import static com.brimmatech.docflow.enums.SettingsCategory.Constants.SYS_PROMPT
     private final ObjectMapper objectMapper;
     private final EncryptDecryptService encryptDecryptService;
     private final Map<CachedSettingKey, TenantSettings> settingsCache = new ConcurrentHashMap<>();
-    @Value("${app.package_processing.default_file_name_template}") private String defaultFileNameTemplate;
     private boolean useCache = false;
 
     @EventListener(ApplicationStartedEvent.class)

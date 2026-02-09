@@ -28,7 +28,6 @@ public class Client {
     private String companyName;
     @Column(name = "email")
     private String email;
-    @Enumerated(EnumType.STRING)
     @Column(name = "address_line1")
     private String addressLine1;
     @Column(name = "address_line2")
