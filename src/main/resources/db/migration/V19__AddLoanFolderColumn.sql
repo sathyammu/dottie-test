@@ -1,1 +1,0 @@
-alter table approval_disclosure add column loan_folder VARCHAR(255);

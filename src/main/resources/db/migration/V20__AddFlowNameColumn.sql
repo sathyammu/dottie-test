@@ -1,1 +1,0 @@
-alter table approval_disclosure add column flow_name VARCHAR(255);
