@@ -64,9 +64,6 @@ spring:
           timeout: 10000
           writetimeout: 1000
 
-  boot:
-    mainclass: com.brimmatech.apps.deapi.DocExtractionApiApplication
-
   profiles:
     active: ${APP_PROFILE:dev}
   servlet:
@@ -103,12 +100,6 @@ spring:
     properties:
       hibernate:
         type: trace
-  service-bus:
-    enabled: ${ENABLE_SERVICE_BUS}
-    connection-string: ${docflow-bus-url}
-    classifier-queue-name: ${DOC_CLASSIFIER_QUEUE_NAME}
-    webhook-event-queue-name: ${WEBHOOK_EVENT_QUEUE_NAME}
-
   flyway:
 
     schemas: public
@@ -161,38 +152,13 @@ spring:
             enabled: true
             endpoint: ${AZURE_KEYVAULT_URI}
 
-sftp:
-  host: ${SFTP_HOST}
-  port: ${SFTP_PORT:22}
-  username: ${SFTP_USERNAME}
-  password: ${SFTP_PASSWORD}
-  remote-dir: ${SFTP_REMOTE_DIR}
-
-
 api:
-  meridian-link:
-    host: ${MERIDIAN_HOST:https://webservices.mortgage.meridianlink.com}
-    auth-url: ${MERIDIAN_URL:/los/webservice/AuthService.asmx}
-    username: ${MERIDIAN_USERNAME}
-    password: ${MERIDIAN_PASSWORD}
-    run-method-url: ${MERIDIAN_RUN_METHOD:/los/webservice/edocsservice.asmx}
-    soap-action: ${MERIDIAN_SOAP_ACTION:http://www.lendersoffice.com/los/webservices/ListEdocsByLoanNumber}
-    endpoint:
-      fetch-all-document-uri: /los/webservice/edocsservice.asmx
-  byte:
-    site: ${BYTE_API_BASE_URLS}
-    host: ${BYTE_API_BASE_URL:https://hosting.bytesoftware.com}
-    endpoint:
-      token-uri: /${BYTE_SITE_NAME}/byteapi/auth
-    authorization-key: ${BYTE_AUTH_KEY}
   teams:
     enabled: ${ENABLED_TEAMS_NOTIFICATIONS:false}
     webhookUrl: ${WEBHOOK_URL:https://brimmatech1.webhook.office.com/webhookb2/ebde754a-74ab-4ffd-a0d7-9584285eb40b@9d67d2f5-a1d9-4d8f-a91d-1c5d78fa3a61/IncomingWebhook/93ba75b49ad74099a5dda58add2e8278/84c2bb53-bccf-4e5c-a30c-53a4a4fc1dc8/V2V34AELzhFgM4X-iLK1960lyrd8PenICjfkISv8VB4UA1}
   encompass:
     host: https://api.elliemae.com/
     endpoint:
-      generate-print-order-url: /encompassdocs/v1/documentOrders/ondemand
-      retrieve-print-order-url: /encompassdocs/v1/documentOrders/ondemand/{orderId}
       token-uri: oauth2/v1/token
       fetch-loan: /encompass/v3/loans/{loanGuid}
       fetch-loan-uri: /encompass/v3/loans/{loanGuid}/fieldReader
@@ -207,43 +173,24 @@ api:
       fetch-document-attachment: /encompass/v1/loans/{LoanGuid}/documents/{DocumentId}/attachments
       fetch-attachment-detail: /encompass/v3/loans/{LoanGuid}/attachments/{AttachmentId}
       fetch-all-attachments-uri: /encompass/v3/loans/{LoanGuid}/attachments
-      update-attachment-uri: /encompass/v3/loans/{LoanGuid}/attachments?action=update
       fetch-attachment-download-url-detail: /encompass/v3/loans/{LoanGuid}/attachmentDownloadUrl
       field-writer-uri: /encompass/v3/loans/{LoanGuid}/fieldWriter
       enhanced-condition-update-uri: /encompass/v3/loans/{loanGuid}/conditions
       post-closing-condition-update-uri: /encompass/v1/loans/{loanGuid}/conditions/postclosing
-      lock-resource-uri: /encompass/v1/resourceLocks?view=id
       remove-document-attachment: /encompass/v3/loans/{LoanGuid}/attachments?action=remove
-      mismo-conversion: /services/v1/transformer?loanId={LoanGuid}&format={formatType}
-      fetch-underwriting-conditions: /encompass/v1/loans/{LoanGuid}/conditions/underwriting
-      fetch-preliminary-conditions: /encompass/v1/loans/{LoanGuid}/conditions/preliminary
-      fetch-postclosing-conditions: /encompass/v1/loans/{LoanGuid}/conditions/postclosing?view=entity&isRemoved=true
       fetch-users: /encompass/v1/company/users
       fetch-efolder: /encompass/v3/settings/efolder/documents
-      dt-logs: /encompass/v3/loans/{LoanGuid}/disclosureTracking2015Logs
-      dt-logs-patch: /encompass/v3/loans/{LoanGuid}/disclosureTracking2015Logs/{DisclosureTrackingId}?view=entity
       create-export-job: /efolder/v1/loans/{loanId}/exportJobsCreator
       v3-assign-document-attachments: /encompass/v3/loans/{loanId}/documents/{documentId}/attachments
       get-export-job-status: /efolder/v1/exportjobs
       standard-condition: /encompass/v1/loans/{{loanId}}/conditions/{{underwriting}}/{{ConditionId}}/comments?action=add&view=entity
       enhanced-condition: /encompass/v3/loans/{{loanId}}/conditions/{{ConditionId}}/comments?action=add&view=entity
-  pluto-querier:
-    endpoint:
-      fetch-purchase-advice-document-fields: ${FETCH_PURCHASE_ADVICE_DOCUMENT_FIELDS:v2/get-field-details}
-      fetch-purchase-condition-request: ${FETCH_PURCHASE_CONDITION_REQUEST:v2/get-enhanced-condition-details}
   los-service:
     host: ${LOS_SERVICE_BASE_URL:https://brimma-valllia-docflow-los-svc-stage-as.azurewebsites.net/}
     attachment-upload-url: losservice/api/v1/Document/{tenantId}/upload?loanGuid={loanGuid}&sorName={sorName}
     assign-source-attachment-url: losservice/api/v1/Document/{tenantId}/assignSourceAttachmentsToDestination
   doc-processor:
     host: ${DOC_PROCESSOR_BASE_URL:https://brimma-vallia-docflow-doc-processor-stage-as.azurewebsites.net/}
-    invoke-agent: ${INVOKE_AGENT:/api/v1/agent/vallia-ask}
-    create-thread: ${CREATE_THREAD_URI:/api/v1/agent/create-thread}
-    delete-thread: ${DELETE_THREAD_URI:/api/v1/agent/delete-thread}
-    history: ${THREAD_HISTORY:/api/v1/agent/thread/history}
-  message-processor:
-    base-url: ${MESSAGE_PROCESSOR_BASE_URL:https://brimma-vallia-docflow-ruleengine-dev-as.azurewebsites.net/docflow-events-publisher}
-    post-message-uri: /api/post-message
 
 mail:
   hostname: ${MAIL_HOST:smtp.office365.com}
