@@ -123,6 +123,19 @@ CREATE TABLE change_ledger (
         UNIQUE (loan_number, flow_name, event_type, thread_id)
 );
 
+CREATE TABLE public.approval_disclosure (
+	id serial4 NOT NULL,
+	loan_number varchar(255) NULL,
+	tenant_id int8 NOT NULL,
+	status varchar(50) NULL,
+	created_date timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	last_modified_date timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	loan_folder varchar(255) NULL,
+	flow_name varchar(255) NULL,
+	CONSTRAINT approval_disc_id PRIMARY KEY (id),
+	CONSTRAINT fk21wedcc05b1hcym445fio4g2l FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
+);
+
 /* =========================================================
    User Config
    ========================================================= */
@@ -159,17 +172,4 @@ CREATE TABLE loan_notes (
     CONSTRAINT fk_loan_notes_tenant
         FOREIGN KEY (tenant_id)
         REFERENCES "Tenant"(id)
-);
-
-CREATE TABLE approval_disclosure (
-	id serial4 NOT NULL,
-	loan_number varchar(255) NULL,
-	tenant_id int8 NOT NULL,
-	status varchar(50) NULL,
-	created_date timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
-	last_modified_date timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
-	loan_folder varchar(255) NULL,
-	flow_name varchar(255) NULL,
-	CONSTRAINT approval_disc_id PRIMARY KEY (id),
-	CONSTRAINT fk21wedcc05b1hcym445fio4g2l FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
 );
