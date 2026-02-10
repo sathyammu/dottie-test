@@ -152,16 +152,6 @@ logging:
     com.brimmatech: DEBUG
     org.springframework.security: DEBUG
 
-spring.flyway.locations: filesystem:db/migration
-
-spring.flyway.password: ${DATABASE_PASSWORD:brimma-admin}
-
-spring.flyway.schemas: public
-
-spring.flyway.url: ${DATABASE_URL:jdbc:postgresql://20.94.224.112:5432/vallia_docflow_dev}
-
-spring.flyway.user: ${DATABASE_USERNAME:postgres}
-
 info.app.name: DocFlow Rule Orchestrator/Engine.
 info.app.description: "There are two versions: Self Rule evaulation by EvalEx and JsonRulesEngine(Pluto)"
 info.app.version: 1.0.0
