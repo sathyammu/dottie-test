@@ -58,7 +58,6 @@ public class DottieApiApplication extends SpringBootServletInitializer {
     private String applicationContextPath;
 
         public static void main(String[] args) {
-                System.setProperty("spring.config.name", "de-api");
                 val ctx = SpringApplication.run(DottieApiApplication.class, args);
                 String cache = ctx.getEnvironment().getProperty("spring.thymeleaf.cache");
                 log.info("Thymeleaf cache = {}", cache);
