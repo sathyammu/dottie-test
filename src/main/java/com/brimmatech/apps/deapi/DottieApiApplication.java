@@ -41,10 +41,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         @ComponentScan(basePackages = "com.brimmatech.apps.deapi"),
         @ComponentScan(basePackages = "com.brimmatech.mcp"),
         @ComponentScan(basePackages = "com.brimmatech.docflow"),
+        @ComponentScan(basePackages = "com.brimmatech.titleconnect"),
         @ComponentScan(basePackages = "com.brimmatech.encompass"),
+        @ComponentScan(basePackages = "com.brimmatech.email"),
         @ComponentScan(basePackages = "com.brimmatech.saas"),
-        @ComponentScan(basePackages = "com.brimmatech.princeton.dottie")
-
+        @ComponentScan(basePackages = "com.brimmatech.sftp"),
+        @ComponentScan(basePackages = "com.brimmatech.azure"),
+        @ComponentScan(basePackages = "com.brimmatech.princeton.dottie"),
+        @ComponentScan(basePackages = "com.brimmatech.shippingpackage")
 
 })
 @Slf4j

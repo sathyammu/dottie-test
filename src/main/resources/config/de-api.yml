@@ -341,7 +341,7 @@ azure:
     client-id: ${AZURE_KEYVAULT_CLIENT_ID:""}
     client-key: ${AZURE_KEYVAULT_CLIENT_KEY:""}
     tenant-id: ${AZURE_KEYVAULT_TENANT_ID:""}
-    enabled: ${AZURE_KEYVAULT_ENABLED:""}
+    enabled: ${AZURE_KEYVAULT_ENABLED:false}
     uri: ${AZURE_KEYVAULT_URI:""}
 #    uri: https://docflow-local-saro.vault.azure.net
 
