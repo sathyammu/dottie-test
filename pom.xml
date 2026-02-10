@@ -750,7 +750,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.brimmatech.apps.deapi.DocExtractionApiApplication</mainClass>
+                    <mainClass>com.brimmatech.apps.deapi.DottieApiApplication</mainClass>
                     <!--<mainClass>${env.SPRING_BOOT_MAINCLASS}</mainClass>-->
 
                 </configuration>

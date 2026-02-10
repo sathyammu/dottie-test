@@ -18,9 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -43,26 +41,21 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         @ComponentScan(basePackages = "com.brimmatech.apps.deapi"),
         @ComponentScan(basePackages = "com.brimmatech.mcp"),
         @ComponentScan(basePackages = "com.brimmatech.docflow"),
-        @ComponentScan(basePackages = "com.brimmatech.titleconnect"),
         @ComponentScan(basePackages = "com.brimmatech.encompass"),
-        @ComponentScan(basePackages = "com.brimmatech.email"),
         @ComponentScan(basePackages = "com.brimmatech.saas"),
-        @ComponentScan(basePackages = "com.brimmatech.sftp"),
-        @ComponentScan(basePackages = "com.brimmatech.azure"),
-        @ComponentScan(basePackages = "com.brimmatech.princeton.dottie"),
-        @ComponentScan(basePackages = "com.brimmatech.shippingpackage")
+        @ComponentScan(basePackages = "com.brimmatech.princeton.dottie")
 
 
 })
 @Slf4j
-public class DocExtractionApiApplication extends SpringBootServletInitializer {
+public class DottieApiApplication extends SpringBootServletInitializer {
 
     @Value("${springdoc.swagger-ui.server-item-url}")
     private String applicationContextPath;
 
         public static void main(String[] args) {
                 System.setProperty("spring.config.name", "de-api");
-                val ctx = SpringApplication.run(DocExtractionApiApplication.class, args);
+                val ctx = SpringApplication.run(DottieApiApplication.class, args);
                 String cache = ctx.getEnvironment().getProperty("spring.thymeleaf.cache");
                 log.info("Thymeleaf cache = {}", cache);
     }
