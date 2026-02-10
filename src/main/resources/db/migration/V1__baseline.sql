@@ -54,7 +54,7 @@ CREATE TABLE tenant_settings (
 	tenant_id int8 NULL,
 	CONSTRAINT tenant_settings_pkey PRIMARY KEY (id),
 	CONSTRAINT unique_category_strategy_tenant_id UNIQUE (category, strategy, tenant_id),
-	CONSTRAINT fk21wedcc05b1hcym445fio4g2l FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
+	CONSTRAINT fk_tenant_settings_tenant FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
 );
 
 /* =========================================================
@@ -133,7 +133,7 @@ CREATE TABLE public.approval_disclosure (
 	loan_folder varchar(255) NULL,
 	flow_name varchar(255) NULL,
 	CONSTRAINT approval_disc_id PRIMARY KEY (id),
-	CONSTRAINT fk21wedcc05b1hcym445fio4g2l FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
+	CONSTRAINT fk_approval_disclosure_tenant FOREIGN KEY (tenant_id) REFERENCES public."Tenant"(id)
 );
 
 /* =========================================================
