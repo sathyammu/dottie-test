@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "\"Tenant\"")
+@Table(name = "Tenant")
 @EntityListeners(AuditingEntityListener.class)
 public class TenantEntity {
 
