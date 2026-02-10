@@ -154,11 +154,11 @@ logging:
 
 spring.flyway.locations: filesystem:db/migration
 
-spring.flyway.password: ${DATABASE_PASSWORD:1503}
+spring.flyway.password: ${DATABASE_PASSWORD:brimma-admin}
 
 spring.flyway.schemas: public
 
-spring.flyway.url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/dottie-loc}
+spring.flyway.url: ${DATABASE_URL:jdbc:postgresql://20.94.224.112:5432/vallia_docflow_dev}
 
 spring.flyway.user: ${DATABASE_USERNAME:postgres}
 

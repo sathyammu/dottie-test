@@ -22,12 +22,6 @@ public enum SettingsCategory {
     }),
 
     ENCOMPASS_ALIAS("encompass", "alias", null),
-    //A3
-    A3_CHAT_SETTINGS("a3", "chat_settings", null),
-    A3_ASSISTANT_OVERLAYS("a3", "assistant_overlays", null),
-    SYS_PROMPTS_A3(Constants.SYS_PROMPTS, "a3", null),
-
-
 
     //Global
     SYS_PROMPTS_PRINCETON_SUMMARY(Constants.SYS_PROMPTS, "princeton-summary", null),

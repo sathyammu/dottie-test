@@ -207,6 +207,7 @@ api:
       fetch-document-attachment: /encompass/v1/loans/{LoanGuid}/documents/{DocumentId}/attachments
       fetch-attachment-detail: /encompass/v3/loans/{LoanGuid}/attachments/{AttachmentId}
       fetch-all-attachments-uri: /encompass/v3/loans/{LoanGuid}/attachments
+      update-attachment-uri: /encompass/v3/loans/{LoanGuid}/attachments?action=update
       fetch-attachment-download-url-detail: /encompass/v3/loans/{LoanGuid}/attachmentDownloadUrl
       field-writer-uri: /encompass/v3/loans/{LoanGuid}/fieldWriter
       enhanced-condition-update-uri: /encompass/v3/loans/{loanGuid}/conditions
@@ -339,10 +340,10 @@ azure_agent:
 azure:
   keyvault:
     client-id: ${AZURE_KEYVAULT_CLIENT_ID:""}
-    client-key: ${AZURE_KEYVAULT_CLIENT_KEY:""}
-    tenant-id: ${AZURE_KEYVAULT_TENANT_ID:""}
-    enabled: ${AZURE_KEYVAULT_ENABLED:false}
-    uri: ${AZURE_KEYVAULT_URI:""}
+    client-key: ${AZURE_KEYVAULT_CLIENT_KEY}
+    tenant-id: ${AZURE_KEYVAULT_TENANT_ID}
+    enabled: ${AZURE_KEYVAULT_ENABLED}
+    uri: ${AZURE_KEYVAULT_URI}
 #    uri: https://docflow-local-saro.vault.azure.net
 
 
@@ -416,7 +417,7 @@ info.app.name: DocFlow Rule Orchestrator/Engine.
 info.app.id: com.brimmatech.orchestrator.
 info.app.description: "There are two versions: Self Rule evaluation by EvalEx and JsonRulesEngine(Pluto)"
 info.app.version: 1.0.0
-info.app.deploy_environment: ${ORCHESTRATOR_DEPLOY_ENV:local}
+info.app.deploy_environment: ${ORCHESTRATOR_DEPLOY_ENV}
 info.app.deploy_url: ${ORCHESTRATOR_URL:http://localhost:8081}
 az.http.logging.level: BODY_AND_HEADERS
 

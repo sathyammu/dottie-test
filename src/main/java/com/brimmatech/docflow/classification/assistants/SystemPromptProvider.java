@@ -15,8 +15,6 @@ import java.util.function.Function;
 @Service @Slf4j @RequiredArgsConstructor public class SystemPromptProvider {
 
     private final TenantSettingsService tenantSettingsService;
-    private final Function<TemplatedPromptMeta<?>, String> promptProcessor;
-    @Value("classpath:prompts/a3/system-prompt.md") private Resource a3SystemPrompt;
     @Value("classpath:prompts/princeton/summary-prompt.md") private Resource loanSummaryPrompt;
 
     public SystemMessage getSystemMessage(long tenantId, SettingsCategory sysPromptsFeeder) {
@@ -27,7 +25,6 @@ import java.util.function.Function;
                 .map((v) -> SystemMessage.builder().text(v).build())
                 .orElseGet(() -> {
                     Resource prompt = switch (sysPromptsFeeder) {
-                        case SYS_PROMPTS_A3 -> a3SystemPrompt;
                         case SYS_PROMPTS_PRINCETON_SUMMARY -> loanSummaryPrompt;
                         default -> null;
                     };

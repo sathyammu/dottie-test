@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.brimmatech</groupId>
-    <artifactId>docflow-rule-engine</artifactId>
+    <artifactId>dottie-orchestrator</artifactId>
     <version>1.0.109</version>
     <name>DocFlow Rule Engine</name>
     <packaging>jar</packaging>
