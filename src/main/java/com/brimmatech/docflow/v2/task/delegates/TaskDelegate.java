@@ -66,11 +66,6 @@ public abstract class TaskDelegate<IN, OUT> {
         return taskUtils.getOutput(task);
     }
 
-    public OUT getTopicOutput(Task task) {
-        return getTaskOutput(task).getTypedOutput(outputArgsType, objectMapper,
-                defaultTopicOutputSupplier);
-    }
-
     public void setup() {
     }
 

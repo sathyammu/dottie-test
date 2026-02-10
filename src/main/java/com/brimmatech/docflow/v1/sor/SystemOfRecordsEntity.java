@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "System_Of_Records")
+@Table(name = "\"System_Of_Records\"")
 @EntityListeners(AuditingEntityListener.class)
 public class SystemOfRecordsEntity {
     @Id

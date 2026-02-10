@@ -203,8 +203,6 @@ import java.util.stream.Collectors;
                         .map(Integer::parseInt)
                         .collect(Collectors.toList());
 
-        val tasks = taskPrettyRepository.findBySequenceInOrderByCreatedAsc(travelledPathRemovedTaskTree);
-
         return taskTreeRepository
                 .findRootByQualifier(treeArgs.qualifier())
                 .map(root -> emptyResult)

@@ -152,6 +152,16 @@ logging:
     com.brimmatech: DEBUG
     org.springframework.security: DEBUG
 
+spring.flyway.locations: filesystem:db/migration
+
+spring.flyway.password: ${DATABASE_PASSWORD:1503}
+
+spring.flyway.schemas: public
+
+spring.flyway.url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/dottie-loc}
+
+spring.flyway.user: ${DATABASE_USERNAME:postgres}
+
 info.app.name: DocFlow Rule Orchestrator/Engine.
 info.app.description: "There are two versions: Self Rule evaulation by EvalEx and JsonRulesEngine(Pluto)"
 info.app.version: 1.0.0
@@ -182,22 +192,22 @@ spring.security:
 #          user-name-attribute: sub
 #          user-info-uri:
 
-      # registration:
-      #   azure_b2c_access_token:
-      #     client-id: ${B2C_SWAGGER_CLIENT_ID}
-      #     client-secret: ${B2C_SWAGGER_CLIENT_SECRET}
-      #     authorization-grant-type: authorization_code
-      #     redirect-uri: http://localhost:8081/login/oauth2/code/azure_dev
-      #     scope: https://brimmatechb2c.onmicrosoft.com/docflow-api/doc.classify
+# registration:
+#   azure_b2c_access_token:
+#     client-id: ${B2C_SWAGGER_CLIENT_ID}
+#     client-secret: ${B2C_SWAGGER_CLIENT_SECRET}
+#     authorization-grant-type: authorization_code
+#     redirect-uri: http://localhost:8081/login/oauth2/code/azure_dev
+#     scope: https://brimmatechb2c.onmicrosoft.com/docflow-api/doc.classify
 
-      # provider:
-      #   azure_b2c_access_token:
-      #     # issuer-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/v2.0/.well-known/openid-configuration
-      #     authorization-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/authorize
-      #     token-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/token
-      #     jwk-set-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/b2c_1_signup_signin/discovery/v2.0/keys
-      #     user-name-attribute: sub
-      #     user-info-uri:
+# provider:
+#   azure_b2c_access_token:
+#     # issuer-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/v2.0/.well-known/openid-configuration
+#     authorization-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/authorize
+#     token-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/B2C_1_SIGNUP_SIGNIN/oauth2/v2.0/token
+#     jwk-set-uri: https://brimmatechb2c.b2clogin.com/brimmatechb2c.onmicrosoft.com/b2c_1_signup_signin/discovery/v2.0/keys
+#     user-name-attribute: sub
+#     user-info-uri:
 # azure:
 #   activedirectory:
 #     # Specifies your Active Directory ID:
