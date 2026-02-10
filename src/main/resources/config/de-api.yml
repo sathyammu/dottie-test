@@ -98,7 +98,7 @@ spring:
       format-sql: true
       globally_quoted_identifiers: true
       connection.provider_class: org.hibernate.hikaricp.internal.HikariCPConnectionProvider
-      ddl-auto: validate
+      ddl-auto: update
 
     properties:
       hibernate:
@@ -108,19 +108,6 @@ spring:
     connection-string: ${docflow-bus-url}
     classifier-queue-name: ${DOC_CLASSIFIER_QUEUE_NAME}
     webhook-event-queue-name: ${WEBHOOK_EVENT_QUEUE_NAME}
-
-  flyway:
-
-    schemas: public
-    url: ${docflow-database-url}
-    user: ${docflow-database-username}
-    password: ${docflow-database-password}
-
-    enabled: true                      # Optional (true by default)
-    baseline-on-migrate: true         # Prevents error on non-empty schema
-    baseline-version: 1
-    locations: db/migration  # Custom migration location (optional)
-    validateMigrationNaming: true
 
   ai:
     chat:
