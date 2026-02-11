@@ -335,5 +335,6 @@ global:
 
 princeton-custom-ui: ${PRINCETON_CUSTOM_UI_URL:https://princeton-dashboard-ui-dev-as.azurewebsites.net/dashboard}
 princeton-enable-prod-email: ${SEND_EMAIL_TO_LO:false}
-loan-summary-cron: ${LOAN_SUMMARY_CRON:0 0 10 * * MON-FRI}
+loan-summary-cron: ${LOAN_SUMMARY_CRON:0 */5 * * * *}
+enable-loan-summary: ${ENABLE-LOAN-SUMMARY:true}
 princeton-condition-uri: ${PRINCETON_CONDITION_UI_URL:https://princeton-dashboard-prod-ui-as.azurewebsites.net/conditions/}

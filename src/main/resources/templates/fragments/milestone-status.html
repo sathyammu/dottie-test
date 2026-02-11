@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="status(dueDate, completedDate)">
+    <span class="legend-dot"
+          th:classappend="${
+              (completedDate != null && !#strings.isEmpty(completedDate)) ?
+                  ' ld-complete' :
+              (dueDate != null && #temporals.isSameDay(dueDate, T(java.time.LocalDate).now())) ?
+                  ' ld-due' :
+              (dueDate != null && #temporals.before(dueDate, T(java.time.LocalDate).now())) ?
+                  ' ld-past' :
+                  ' ld-not'
+          }">
+        <svg th:if="${completedDate != null && !#strings.isEmpty(completedDate)}"
+             width="12" height="12" viewBox="0 0 12 12" style="position: absolute; top: 0; left: 0;">
+            <polyline points="2,6 5,9 10,3" style="fill:none;stroke:white;stroke-width:2"></polyline>
+        </svg>
+    </span>
+</th:block>
+</body>
+</html>

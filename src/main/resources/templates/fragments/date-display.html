@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Due Date Fragment -->
+<th:block th:fragment="dueDate(dateValue)">
+    <span th:text="${
+        dateValue != null && !#strings.isEmpty(dateValue) ?
+            (dateValue instanceof T(java.util.Date) ?
+                #dates.format(dateValue, 'MM/dd/yyyy') :
+                #strings.substringBefore(dateValue, ' ')
+            )
+        : 'N/A'
+    }">N/A</span>
+</th:block>
+
+<!-- Completed Date Fragment -->
+<th:block th:fragment="completedDate(dateValue)">
+    <span th:text="${
+        dateValue != null && !#strings.isEmpty(dateValue) ?
+            (dateValue instanceof T(java.util.Date) ?
+                #dates.format(dateValue, 'MM/dd/yyyy') :
+                #strings.substringBefore(dateValue, ' ')
+            )
+        : 'Not Complete'
+    }">Not Complete</span>
+</th:block>
+
+</body>
+</html>
