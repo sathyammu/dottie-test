@@ -49,10 +49,6 @@ public class RunnerInjections {
     @Autowired
     @Qualifier("task-runner-pool")
     Executor sequentialExecutor;
-    @Value("${docflow.taskConfig.limiterBounds}")
-    private int aiTasksLimiterBounds;
-    @Value("${docflow.taskConfig.noOfWorkers}")
-    private int noOfWorkers;
 
     @EventListener(ApplicationReadyEvent.class)
     public void tryStartTasks() throws InterruptedException {

@@ -101,7 +101,6 @@ spring:
       hibernate:
         type: trace
   flyway:
-
     schemas: public
     url: ${docflow-database-url}
     user: ${docflow-database-username}
@@ -214,8 +213,7 @@ app:
       startDate: ${INDEXING_START_DATE:2026-02-01}
   zipkin:
     host: ${ZIPKIN_URL:http://localhost:8080/api/v2/spans}
-  rpa:
-    connection-url: https://prod-24.westus.logic.azure.com:443/workflows/49bc51a22e6f467daf0db2cf18976270/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=CJOaIy-qXVHxs6EeGPmJI02skzXvpyayaUSBG3ZS878
+
   crypto:
     encryption-algorithm: AES/ECB/PKCS5Padding
     encryption-key: WEc#HCt<mC)Sw7(
@@ -226,63 +224,18 @@ app:
   blob:
     connection-string: ${docflow-blob-connection-string}
     container-name: ${CONTAINER_NAME:docflow}
-  v2:
-    json-rule-engine-url: ${RULE_ENGINE_URL:https://brimma-vallia-docflow-pluto-prod-as.azurewebsites.net}
-    json-neptune-rule-engine-url: ${NEPTUNE_ENGINE_URL:https://vallia-docflow-neptune-node-dev-as.azurewebsites.net}
 
   client_assertion:
     signer_keyvault: https://kv-brimma-dev.vault.azure.net/
     #signer_key: jwt-signing-key
 
-  classification:
-    page_caching: false
-    dump_whole_pages_when_total_pages_eq: 2
-
-  package_processing:
-    default_file_name_template: ${DEFAULT_FILE_NAME_TEMPLATE:<span th:text="${documentId + '_' + fileName + '_' + startPage + '_to_' + endPage + '.pdf'}"></span>}
-
 
 spring.config:
   import: optional:classpath:/git.properties
 
-docintel.config:
-  extraction.confidence_upper_limit: ${EXTRACTION_CONFIDENCE_UPPER_LIMIT:0.90}
-  classification.confidence_upper_limit: ${CLASSIFICATION_CONFIDENCE_UPPER_LIMIT:0.90}
-azure_chat:
-  endpoint: https://brimma-vallia-ai-dev-oa.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-08-01-preview
-  langChainEndpoint: https://brimma-vallia-ai-dev-oa.openai.azure.com
-  app_key: ${docflow-azure-ai-chatbot-api-key}
-
-openai.assistants_api:
-  endpoint: ${OPEN_AI_ASSISTANT_API_ENDPOINT:${AZURE_API_BASE}}
-  api_key: ${docflow-open-ai-assistant-api-key}
-  #assistantName: SelfEmploymentIncomeCalcV3
-  assistantId: ${ASSISTANT_ID:asst_K7yyZawTtuagmjJe6SlijAAg}
-  #vectorStoreName: EmploymentIncomeCalcV3.6
-  vectorStoreId: ${VECTOR_STORE_ID:vs_ZFc5jQIynXeTLCSoLCOPvrxy}
-#  can you perform the analysis based on the docs in the vector store as instructed in the system prompt
-
 tenant:
   credential:
     profile: ${TENANT_CREDENTIAL_PROFILE:local}
-
-
-azure_form_recognizer:
-  endpoint: ${AZURE_DOC_EXTRACTION_ENDPOINT}
-  app_key: ${docflow-azure-doc-extraction-api-key}
-azure_document_classification:
-  split_mode: ${AZURE_DOC_CLASSIFICATION_SPLIT_MODE:none}
-  endpoint: ${AZURE_DOC_CLASSIFICATION_ENDPOINT:https://valliadocai.cognitiveservices.azure.com}
-  model-id: ${AZURE_DOC_CLASSIFICATION_MODEL_ID:vallia_docintel_dc_v7.0.0}
-  ocp-subscription-key: ${docflow-ocp-apim-subscription-key}
-azure_content_understanding:
-  endpoint: ${AZURE_CONTENT_UNDERSTANDING_ENDPOINT}
-  app_key: ${docflow-azure-content-understanding-api-key}
-azure_agent:
-  connectionString: ${AGENT_CONNECTION_STRING:eastus2.api.azureml.ms;02f9d2d4-e049-4eb5-b22f-b3163a9875cd;brimma-vallia-ai-ask-and-analyze-dev-rg;vallia-ask-and-analyze}
-  agentId: ${AGENT_ID:asst_HRGy5NMYsKHjyEAABDXEOj7c}
-
-
 
 azure:
   keyvault:
@@ -344,10 +297,6 @@ logging:
     com.brimmatech.docflow.v2.task.requestgenerators: DEBUG
     com.brimmatech.docflow.extraction.mle: TRACE
 
-    com.brimmatech.docflow.classification.assistants.DocTypeExplainer: DEBUG
-    com.brimmatech.docflow.classification.assistants.PageFeederAssistant: DEBUG
-    com.brimmatech.mcp.PlanningResultsHolder: TRACE
-
     #    com.brimmatech.docflow.v2.task.repository: TRACE
     com.azure.core: OFF
     #    com.azure.core.http: TRACE
@@ -355,10 +304,6 @@ logging:
     com.fasterxml.jackson: OFF
     reactor.netty.http.client: OFF
     org.testcontainers: DEBUG
-
-docflow.taskConfig:
-  limiterBounds: ${AI_TASKS_LIMITER_BOUND}
-  noOfWorkers: ${AI_TASKS_WORKERS_COUNT}
 
 info.app.name: DocFlow Rule Orchestrator/Engine.
 info.app.id: com.brimmatech.orchestrator.
@@ -385,26 +330,9 @@ docflow-database-url: ${DATABASE_URL}
 docflow-database-username: ${DATABASE_USERNAME}
 docflow-ocp-apim-subscription-key: ${OCP_APIM_SUBSCRIPTION_KEY}
 docflow-open-ai-assistant-api-key: ${AZURE_OPENAI_API_KEY}
-
-ask-and-analyze:
-  pipeline:
-    folders: ${ASK_AND_ANALYZE_PIPELINE_FOLDERS:Active Loans}
-
 global:
   tenantId: ${GLOBAL_TENANT_ID:9}
 
-pa-ps:
-  open-ai-assistant: ${PA_OPEN_AI_ASSISTANT_ENDPOINT:https://vallia-docflow-openai.openai.azure.com/}
-  open-ai-api-key: ${PA_OPEN_AI_API_KEY:88AXBEoRhSRhTR0MQL3dFhhsTTRFZj2yka2C8eyl05a6aFY6Z6Z0JQQJ99BGACYeBjFXJ3w3AAABACOGrDhr}
-  open-ai-assistant-id: ${PA_ASSISTANT_ID:asst_wDuxkSMe3YTb8n9bAoBOMCIi}
-genie:
-  config:
-    root: ${GENIE_CONFIG_ROOT}
-BayEquity:
-  loans-batch-size: ${BE_LOAN_BATCH_SIZE:50}
-  closing-package:
-    Batch-size: ${NUM_PER_BATCH:2}
-    to-be-process-in: ${PROCESS_ENV:dev}
 princeton-custom-ui: ${PRINCETON_CUSTOM_UI_URL:https://princeton-dashboard-ui-dev-as.azurewebsites.net/dashboard}
 princeton-enable-prod-email: ${SEND_EMAIL_TO_LO:false}
 loan-summary-cron: ${LOAN_SUMMARY_CRON:0 0 10 * * MON-FRI}

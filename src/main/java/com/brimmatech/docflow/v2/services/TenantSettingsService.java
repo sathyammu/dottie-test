@@ -2,7 +2,6 @@ package com.brimmatech.docflow.v2.services;
 
 import com.brimmatech.docflow.enums.SettingsCategory;
 import com.brimmatech.docflow.exception.DocflowDataException;
-import com.brimmatech.docflow.v2.dto.TenantSettingsMetaAction;
 import com.brimmatech.docflow.v2.models.TenantSettings;
 import com.brimmatech.docflow.v2.repository.TenantSettingsRepository;
 import com.brimmatech.general.types.ThrowingSupplier;
@@ -17,7 +16,6 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -121,20 +119,6 @@ import static com.brimmatech.docflow.enums.SettingsCategory.Constants.SYS_PROMPT
             mailConfigDto = objectMapper.convertValue(decrypt, MailConfigDto.class);
         }
         return Optional.ofNullable(mailConfigDto);
-    }
-
-    public void applySubstitution(JsonNode parent,
-                                  String key,
-                                  JsonNode value,
-                                  TenantSettingsMetaAction.SubstitutionType type) {
-
-        if (key == null || key.isBlank()) return;
-
-        switch (type) {
-            case ADD -> applyAdd(parent, key, value);
-            case DELETE -> applyDelete(parent, key);
-            case EDIT -> applyEdit(parent, key, value);
-        }
     }
 
 

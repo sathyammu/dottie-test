@@ -1,8 +1,6 @@
 package com.brimmatech.docflow.v2.task.dto;
 
 import com.brimmatech.docflow.enums.SettingsCategory;
-import com.brimmatech.docflow.extraction.DexStrategy;
-import com.brimmatech.docflow.extraction.PollStrategy;
 import com.brimmatech.docflow.v2.models.TaskTree;
 import com.brimmatech.encompass.attachments.DownloadStrategy;
 import com.brimmatech.general.config.TemplateConfig.TOPICS;
@@ -46,15 +44,11 @@ public class CreationArgs {
     /**
      * @param docExId       Applicable for any topic that takes in a model Id and name
      * @param modelType     Applicable for any topic that takes in a model Id and name
-     * @param strategy      Only for EXTRACT_DOC_TYPE; differentiates DOC_INTEL and content_understanding strategies
-     * @param pollStrategy  Only for EXTRACT_DOC_TYPE; differentiates REST_API and SDK     *
      * @param modelIds      Only for content_understanding strategy:  list of models to extract data from
      */
     @Builder public record TaskInputFromDex(@With int docExId,
                                             @With int changeLedgerId,
                                             String modelType,
-                                            DexStrategy strategy,
-                                            PollStrategy pollStrategy,
                                             Integer pageFrom,
                                             Integer pageTo,
                                             SettingsCategory promptStrategy,

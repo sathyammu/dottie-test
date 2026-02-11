@@ -37,27 +37,11 @@ public class TemplateConfig {
 
     @Autowired
     ObjectMapper objectMapper;
-    @Value("${app.v2.json-rule-engine-url}")
-    private String jsonRuleEngineUrl;
-
-    @Value("${app.v2.json-neptune-rule-engine-url}")
-    private String jsonNeptuneRuleEngineUrl;
-
 
     @Bean
     JqLibrary jqLibrary() {
         return ImmutableJqLibrary.of();
 
-    }
-
-    @Bean
-    Function<String, String> jsonRuleEngineUrlFor() {
-        return path -> String.format("%s/%s", jsonRuleEngineUrl, path);
-    }
-
-    @Bean
-    Function<String, String> jsonNeptuneRuleEngineUrlFor() {
-        return path -> String.format("%s/%s", jsonNeptuneRuleEngineUrl, path);
     }
 
     @Bean
