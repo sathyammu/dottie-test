@@ -1,5 +1,6 @@
 package com.brimmatech.encompass.attachments;
 
+import com.brimmatech.encompass.attachments.dto.AttachmentUpdate;
 import com.brimmatech.encompass.attachments.dto.EncompassAttachmentV3Response;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface AttachmentProcessor {
     List<EncompassAttachmentV3Response> retrieveAllAttachments(String loanGuid, String accessToken);
 
     void removeDocumentAttachment(String loanGuid, String attachmentId,String accessToken);
+
+    void updateAttachmentDetails(String loanGuid, AttachmentUpdate attachmentUpdate, String accessToken);
 
     List<EncompassAttachmentDownloadEntityBatch> downloadAttachmentUrlBatchWise(String loanGuid, String accessToken, Map<String, String> attachmentIdsWithRequestIdMap);
 

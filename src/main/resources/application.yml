@@ -184,6 +184,7 @@ api:
       get-export-job-status: /efolder/v1/exportjobs
       standard-condition: /encompass/v1/loans/{{loanId}}/conditions/{{underwriting}}/{{ConditionId}}/comments?action=add&view=entity
       enhanced-condition: /encompass/v3/loans/{{loanId}}/conditions/{{ConditionId}}/comments?action=add&view=entity
+      update-attachment-uri: /encompass/v3/loans/{LoanGuid}/attachments?action=update
   los-service:
     host: ${LOS_SERVICE_BASE_URL:https://brimma-valllia-docflow-los-svc-stage-as.azurewebsites.net/}
     attachment-upload-url: losservice/api/v1/Document/{tenantId}/upload?loanGuid={loanGuid}&sorName={sorName}

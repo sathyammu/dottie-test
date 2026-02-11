@@ -36,13 +36,11 @@ public class ApprovalDisclosureController {
                 log.error("Not able to extract loan guid from the webhook event");
                 throw new DocFlowDataProcessingException("Not able to extract event information from webhook event", HttpStatus.BAD_REQUEST.value());
             }
-            if(flowName.equalsIgnoreCase(TenantSettingsMeta.TaskBusinessFlowName.approval_disclosure.name())){
+            if(flowName.equalsIgnoreCase("approval-disclosure")){
                 approvalDisclosureService.saveApprovalDisclosureLoans(tenantId, webhookDataDto, TenantSettingsMeta.TaskBusinessFlowName.fromValue(flowName));
-            }
-            if(flowName.equalsIgnoreCase("pre-closing-disclosure")){
+            }else if(flowName.equalsIgnoreCase("pre-closing-disclosure")){
                 approvalDisclosureService.saveApprovalDisclosureLoansModel(tenantId, webhookDataDto, TenantSettingsMeta.TaskBusinessFlowName.fromValue(flowName));
-            }
-            else {
+            }else if(flowName.equalsIgnoreCase("coc-disclosure")) {
                 approvalDisclosureService.saveCOCDisclosureLoans(tenantId, webhookDataDto, TenantSettingsMeta.TaskBusinessFlowName.fromValue(flowName));
             }
         } catch (IOException exception) {

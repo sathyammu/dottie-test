@@ -1,10 +1,13 @@
 package com.brimmatech.princeton.dottie.conditions;
 
+import com.brimmatech.encompass.attachments.dto.AttachmentUpdate;
+import com.brimmatech.docflow.v2.dto.LoanUpdateDTO;
 import com.brimmatech.encompass.attachments.dto.EncompassAttachment;
 import com.brimmatech.encompass.conditions.dto.ConditionStatusRequest;
 import com.brimmatech.encompass.documentcreator.DocumentService;
 import com.brimmatech.encompass.documentupload.FileUploadDetail;
 import com.brimmatech.encompass.documentupload.UploadAttachment;
+import com.brimmatech.encompass.notes.NotesService;
 import com.brimmatech.princeton.dottie.ConditionDocumentRequest;
 import com.brimmatech.princeton.dottie.ConditionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +30,7 @@ public class LoanConditionController {
     private final ConditionService conditionService;
     private final ConditionalAutomateEmail emailService;
     private final DocumentService documentService;
+    private final NotesService notesService;
 
     @PutMapping("/tenant/{tenantId}/loan/{loanId}/conditions/{conditionType}")
     public ResponseEntity<?> updateStatus(
@@ -82,6 +86,18 @@ public class LoanConditionController {
         return documentService.fetchAttachment(loanId, tenantId, attachments, userToken);
     }
 
+    @PatchMapping("/loan/{loanId}/renameAttachment")
+    public ResponseEntity<?> updateAttachmentDetails(@PathVariable String loanId,
+                                                     @RequestBody AttachmentUpdate attachmentUpdate,
+                                                     @RequestHeader("Authorization") String userToken){
+
+        if (attachmentUpdate.getTitle() == null || attachmentUpdate.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Title cannot be empty");
+        }
+        conditionService.updateAttachment(loanId, attachmentUpdate, userToken);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping(value = "/tenant/{tenantId}/loan/{loanId}/attachments/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileUploadDetail> uploadSingleAttachment(
             @PathVariable String tenantId,
@@ -106,6 +122,16 @@ public class LoanConditionController {
         conditionService.removeAttachment(authHeader, tenantId, loanId,
                 attachmentId);
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/tenant/{tenantId}/loan/{loanId}/submit")
+    public ResponseEntity<Void> submitConditions(@PathVariable String loanId,
+                                                 @PathVariable long tenantId,
+                                                 @RequestBody List<LoanUpdateDTO> request,
+                                                 @RequestHeader("Authorization") String userToken){
+
+        notesService.loanNotesTransfer(userToken, tenantId, loanId, request);
         return ResponseEntity.ok().build();
     }
 

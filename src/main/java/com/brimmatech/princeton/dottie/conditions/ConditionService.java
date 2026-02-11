@@ -9,6 +9,7 @@ import com.brimmatech.docflow.v2.services.AzureBlobService;
 import com.brimmatech.docflow.v2.services.DocIntelHelperService;
 import com.brimmatech.docflow.v2.task.TaskFactory;
 import com.brimmatech.encompass.attachments.EncompassAttachmentProcessor;
+import com.brimmatech.encompass.attachments.dto.AttachmentUpdate;
 import com.brimmatech.encompass.conditions.ConditionType;
 import com.brimmatech.encompass.conditions.ICondition;
 import com.brimmatech.encompass.conditions.dto.*;
@@ -631,6 +632,13 @@ public class ConditionService {
 
         attachment.setContentType(file.getContentType());
         attachment.setAttachmentTitleWithFileExtension(file.getOriginalFilename());
+    }
+
+    public void updateAttachment(String loanGuid, AttachmentUpdate attachmentUpdate, String accessToken){
+
+        attachmentUpdate.setType(encompassAttachmentProcessor.retrieveAttachmentEntityDetail(loanGuid, attachmentUpdate.getId(), accessToken).getType());
+
+        encompassAttachmentProcessor.updateAttachmentDetails(loanGuid, attachmentUpdate, accessToken);
     }
 
     public void removeAttachment(String accessToken, String tenantId, String loanId, String attachmentId) {

@@ -1,10 +1,8 @@
 package com.brimmatech.encompass.attachments;
 
+import com.brimmatech.docflow.exception.DocflowDataException;
 import com.brimmatech.docflow.exception.LoanLockException;
-import com.brimmatech.encompass.attachments.dto.EncompassAttachment;
-import com.brimmatech.encompass.attachments.dto.EncompassAttachmentV3Response;
-import com.brimmatech.encompass.attachments.dto.ReassignFolderAttachmentRequest;
-import com.brimmatech.encompass.attachments.dto.RemoveAttachmentRequest;
+import com.brimmatech.encompass.attachments.dto.*;
 import com.brimmatech.general.errorhandling.ValliaDataException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +56,8 @@ public class EncompassAttachmentProcessor implements AttachmentProcessor {
     @Value("${api.encompass.endpoint.get-export-job-status}")
     private String getExportJobStatus;
     private WebClient webClient;
+    @Value("${api.encompass.endpoint.update-attachment-uri}")
+    private String updateAttachment;
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
@@ -144,6 +144,31 @@ public class EncompassAttachmentProcessor implements AttachmentProcessor {
             throw new ValliaDataException(e.getMessage());
         }
         return encompassAttachments;
+    }
+
+    @Override
+    public void updateAttachmentDetails(String loanGuid, AttachmentUpdate attachmentUpdate, String accessToken){
+        try {
+            webClient.patch()
+                    .uri(updateAttachment, loanGuid)
+                    .headers(headers -> headers.setBearerAuth(accessToken))
+                    .bodyValue(List.of(attachmentUpdate))
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+            log.info("Updated the Attachment Details for a loan: {} and a attachmentId: {}", loanGuid, attachmentUpdate.getId());
+        }
+        catch (WebClientResponseException e){
+            log.error("Unexpected error updating Attachment for a loan: {} and a attachmentId: {}", loanGuid, attachmentUpdate.getId(), e.getMessage());
+
+            if(e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new DocflowDataException(e.getResponseBodyAsString());
+            }
+            else{
+                throw new ValliaDataException(e.getResponseBodyAsString());
+            }
+        }
     }
 
     @Override
