@@ -17,6 +17,7 @@ import com.brimmatech.docflow.v2.task.repository.ConnectionProviderTaskRepositor
 import com.brimmatech.docflow.v2.tracing.RouteTracingService;
 import com.brimmatech.general.config.TemplateConfig.TOPICS;
 import com.brimmatech.general.infra.ConnectionProvider;
+import com.brimmatech.general.types.ThrowingSupplier;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import no.skatteetaten.fastsetting.formueinntekt.felles.task.api.TaskResult;
 import no.skatteetaten.fastsetting.formueinntekt.felles.task.api.TaskSink.Insertion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -191,6 +193,13 @@ import java.util.stream.Collectors;
 
         val treeArgs = TaskFactory.extractTreeArgs.apply(completedTask, objectMapper);
 
+        if (!StringUtils.hasText(treeArgs.parent())) {
+            return new CurNextTaskDefs(Optional.empty(),
+                    Optional.empty(),
+                    "",
+                    0);
+        }
+
         val travelledPath = new ArrayList<>(List.of(treeArgs.parent().split("\\.")));
 
         CurNextTaskDefs emptyResult = new CurNextTaskDefs(Optional.empty(), Optional.empty(), null, -1);
@@ -203,10 +212,26 @@ import java.util.stream.Collectors;
                         .map(Integer::parseInt)
                         .collect(Collectors.toList());
 
-        return taskTreeRepository
-                .findRootByQualifier(treeArgs.qualifier())
-                .map(root -> emptyResult)
-                .orElse(emptyResult);
+        val tasks = taskPrettyRepository.findBySequenceInOrderByCreatedAsc(travelledPathRemovedTaskTree);
+
+        return taskTreeRepository.findRootByQualifier(treeArgs.qualifier()).map(root -> {
+            return taskUtils.pickRouteFromRootMeta(root).map(route -> {
+                val configs = route.getConfig();
+                for (var i = 0; i < travelledPathRemovedTaskTree.size(); i++) {
+                    if (tasks.size() <= i ||
+                            configs.size() <= i ||
+                            !tasks.get(i).getTopic().equals(configs.get(i).getTopic())) {
+                        return emptyResult;
+                    }
+                }
+                return new CurNextTaskDefs(ThrowingSupplier.getCapturingExceptions(() -> {
+                    return configs.get(travelledPathRemovedTaskTree.size() - 1);
+                }), ThrowingSupplier.getCapturingExceptions(() -> {
+                    return configs.get(travelledPathRemovedTaskTree.size());
+                }), route.getName(), travelledPathRemovedTaskTree.size());
+
+            }).orElse(emptyResult);
+        }).orElse(emptyResult);
     }
 
 

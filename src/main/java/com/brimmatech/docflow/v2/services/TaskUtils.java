@@ -1,6 +1,8 @@
 package com.brimmatech.docflow.v2.services;
 
 import com.brimmatech.docflow.v2.models.TaskPretty;
+import com.brimmatech.docflow.v2.models.TaskRoute;
+import com.brimmatech.docflow.v2.models.TaskTree;
 import com.brimmatech.docflow.v2.repository.TaskPrettyRepository;
 import com.brimmatech.docflow.v2.repository.TenantSettingsRepository;
 import com.brimmatech.docflow.v2.task.dto.CreationArgs.RootTaskInput;
@@ -69,5 +71,11 @@ import java.util.Optional;
         val sourceTask = taskPrettyRepository.findBySequence(task.getSequence());
         return sourceTask.flatMap(v -> ThrowingSupplier.getCapturingExceptions(() -> objectMapper.readValue(v.getOutput(),
                 TaskOutputArgs.class))).orElse(TaskOutputArgs.create());
+    }
+
+    public Optional<TaskRoute> pickRouteFromRootMeta(TaskTree tree) {
+        return ThrowingSupplier.getCapturingExceptions(() -> objectMapper.treeToValue(tree.getMeta().at("/route"),
+                TaskRoute.class));
+
     }
 }
